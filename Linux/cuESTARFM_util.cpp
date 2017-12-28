@@ -3,7 +3,7 @@
 void usage(char *command) {
   printf("Usage: %s <IN_PARAMETER_FILE>\n", command);
   printf("<IN_PARAMETER_FILE> is a text input file which contains:\n");
-  printf("STARFM_PARAMETER_START\n");
+  printf("ESTARFM_PARAMETER_START\n");
   printf("\tNUM_IN_PAIRS = \n");
   printf("\tThe_pf_band_of_Landsat_for_calculating = \n");
   printf("\tThe_pc_band_of_MODIS_for_calculating = \n");
@@ -16,7 +16,7 @@ void usage(char *command) {
  // printf("\t =\n");
   printf("\tLandsat_sensor_error= \n");
   printf("\tMODIS_sensor_error = \n"); 
-  printf("STARFM_PARAMETER_END\n");
+  printf("ESTARFM_PARAMETER_END\n");
 }
 int parseParameters(char *fname, CuLayer *psensor,PARAMETER *par)
 {
@@ -48,7 +48,7 @@ int parseParameters(char *fname, CuLayer *psensor,PARAMETER *par)
 		nn++;
 		if(nn>1000)
 		{
-			cerr<<"ÅäÖÃÎÄ¼þÓ¦¸ÃÓÃESTARFM_PARAMETER_END½áÎ²"<<endl;
+			cerr<<"é…ç½®æ–‡ä»¶åº”è¯¥ç”¨ESTARFM_PARAMETER_ENDç»“å°¾"<<endl;
 				break;
 		}
 		memset(buffer,0,1000);
@@ -66,7 +66,7 @@ int parseParameters(char *fname, CuLayer *psensor,PARAMETER *par)
 				par->NUM_PAIRS = atoi(tokenptr);
 				if(par->NUM_PAIRS<=1)
 				{
-					cerr<<"²Î¿¼Ó°ÏñÖÁÉÙÁ½¶Ô"<<endl;
+					cerr<<"å‚è€ƒå½±åƒè‡³å°‘ä¸¤å¯¹"<<endl;
 					return -1;
 				}
 			}
@@ -134,7 +134,7 @@ int parseParameters(char *fname, CuLayer *psensor,PARAMETER *par)
     {
 		if(psensor[0].getHeight()!=psensor[i].getHeight()||psensor[0].getWidth()!=psensor[i].getWidth())
 		{
-			cerr<<"ÊäÈëÓ°ÏñÍ¼·ù·¶Î§²»Æ¥Åä"<<endl;
+			cerr<<"è¾“å…¥å½±åƒå›¾å¹…èŒƒå›´ä¸åŒ¹é…"<<endl;
 			return -1;
 		}
 	}
