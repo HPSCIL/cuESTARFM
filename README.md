@@ -1,10 +1,10 @@
-Current Version
+cuESTARFM
 ========
-cuESTARFM, Version 1.0
+Version 1.0
 
 Overview
 ========
-MODIS and Landsat surface reflectance products have complementary characteristics in terms of spatial and temporal resolutions. To fully exploit these datasets, the Spatial and Temporal Adaptive Reflectance Fusion Model (STARFM) was developed by Gao et al. (2006). The STARFM approach blends the high-frequency temporal information from MODIS and the high-resolution spatial information from Landsat to generate synthetic surface reflectance products at 30m spatial resolution and daily temporal resolution. STARFM uses one or more pairs of Landsat-MODIS images collected on the same dates to predict surface reflectance at Landsat resolution on other MODIS observation dates. In order to better predict the reflectance of sub-pixel consisting of heterogeneous landscapes , an enhanced STARFM (ESTARFM) was developed by Zhu et al. (2010), which is based on the spectral unmixing theory and uses a “conversion coefficient” to help the prediction. However, the computational performance of ESTARFM has been a bottleneck for mass production.
+MODIS and Landsat surface reflectance products have complementary characteristics in terms of spatial and temporal resolutions. To fully exploit these datasets, the Spatial and Temporal Adaptive Reflectance Fusion Model (STARFM) was developed by Gao et al. (2006). The STARFM approach blends the high-frequency temporal information from MODIS and the high-resolution spatial information from Landsat to generate synthetic surface reflectance products at 30m spatial resolution and daily temporal resolution. STARFM uses one or more pairs of Landsat-MODIS images collected on the same dates to predict surface reflectance at Landsat resolution on other MODIS observation dates. In order to better predict the reflectance of sub-pixel consisting of heterogeneous landscapes, an enhanced STARFM (ESTARFM) was developed by Zhu et al. (2010), which is based on the spectral unmixing theory and uses a “conversion coefficient” to help the prediction. However, the computational performance of ESTARFM has been a bottleneck for mass production.
 
 To overcome the computational barrier and support mass production of large-size images, we designed and implemented a GPU-enabled ESTARFM program based on the Compute Unified Device Architecture (CUDA), called cuESTARFM. By taking advantages of the large amount of concurrent computing threads of a GPU, cuESTARFM can greatly reduce the computing time and improve the computational performance. Experiments showed that cuESTARFM achieved a speedup of 75 using a Nvidia Tesla K40 GPU, compared with a sequential ESTARFM program running on an Intel Xeon E3-1226 CPU
 
@@ -46,8 +46,8 @@ Compilation
   Once successfully compiled, an executable file, cuESTARFM.exe, is created.
 + For the Linux/Unix version (using the CUDA compiler --- nvcc)  
 In a Linux/Unix terminal, type in: 
-  1. cd /the-directory-of-source-codes/
-  2. nvcc -o cuESTARFM kernel.cu cuLayer.cpp cuESTARFM_util.cpp trans.cpp -lgdal  
+  - $ cd /the-directory-of-source-codes/
+  - $ nvcc -o cuESTARFM kernel.cu cuLayer.cpp cuESTARFM_util.cpp trans.cpp -lgdal  
   Once successfully compiled, an executable file, cuESTARFM, is created.
   
 Usage 
@@ -100,7 +100,8 @@ Example (# for comments):
 
 + The program runs as a command line. You may use the Command (i.e., cmd) in Windows, or a terminal in Linux/Unix. 
    - For the Windows version:    
-   cuESTARFM.exe input.txt 
+   $ cuESTARFM.exe parameters.txt 
    - For the Linux/Unix version:   
-   ./cuESTARFM input.txt  
-  Note: The computational performance of cuESTARFM largely depends on the GPU. The more powerful is the GPU, the better performance. 
+   $ ./cuESTARFM parameters.txt 
+
++ Note: The computational performance of cuESTARFM largely depends on the GPU. The more powerful is the GPU, the better performance. 
