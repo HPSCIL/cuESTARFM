@@ -126,6 +126,8 @@ int parseParameters(char *fname, CuLayer *psensor,PARAMETER *par)
 				par->class_num=atoi(tokenptr);
 			else if(strcasecmp(label, "sensor_uncertain") == 0)
 				par->uncertain=atof(tokenptr);
+			else if(strcasecmp(label, "G_Type") == 0)
+				sscanf(tokenptr, "%s",par->G_Type);
 			label = tokenptr;
 		}
 		
