@@ -668,7 +668,7 @@ void runtest1(float **BufferIn11,float **BufferIn22,float **BufferIn33,float **B
 	cudaMemcpy(dev_std, std,sizeof(float)*BandNum*2,cudaMemcpyHostToDevice);
 	int deviceCount;
 	cudaGetDeviceCount(&deviceCount);
-	cudaSetDevice(0);
+//	cudaSetDevice(0);
 	/*size_t ff,tt;
     cudaMemGetInfo(&ff, &tt);
 	cudaEvent_t start,stop;
@@ -1025,7 +1025,7 @@ void Re_fusion3(CuLayer *psensor,PARAMETER *par)
 	//e.Blending2(BufferLandsat_0,BufferModis_0,BufferLandsat_1,BufferModis_1,BufferModis_2,BufferOutColor,height,width,win_size,flag, L_err, M_err, Para_h,BandNum,1.0);
 	long now1 = clock();
 	 runtest(BufferLandsat_0,BufferModis_0,BufferLandsat_1,BufferModis_1,BufferModis_2,BufferOutColor,height,width,win_size,M_err,BandNum,class_num);
-	  printf("GPU运行时间为：%dms\n", int(((double)(clock() - now1)) / CLOCKS_PER_SEC * 1000));
+	  printf("GPU脭脣脨脨脢卤录盲脦陋拢潞%dms\n", int(((double)(clock() - now1)) / CLOCKS_PER_SEC * 1000));
 	for (b=0;b<BandNum;b++)
 	{
 		GDALRasterBand* HOut = LandsatDs->GetRasterBand(b+1);
