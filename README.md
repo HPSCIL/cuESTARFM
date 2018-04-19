@@ -6,7 +6,7 @@ Overview
 ========
 MODIS and Landsat surface reflectance products have complementary characteristics in terms of spatial and temporal resolutions. To fully exploit these datasets, the Spatial and Temporal Adaptive Reflectance Fusion Model (STARFM) was developed by Gao et al. (2006). The STARFM approach blends the high-frequency temporal information from MODIS and the high-resolution spatial information from Landsat to generate synthetic surface reflectance products at 30m spatial resolution and daily temporal resolution. STARFM uses one or more pairs of Landsat-MODIS images collected on the same dates to predict surface reflectance at Landsat resolution on other MODIS observation dates. In order to better predict the reflectance of sub-pixel consisting of heterogeneous landscapes, an enhanced STARFM (ESTARFM) was developed by Zhu et al. (2010), which is based on the spectral unmixing theory and uses a “conversion coefficient” to help the prediction. However, the computational performance of ESTARFM has been a bottleneck for mass production.
 
-To overcome the computational barrier and support mass production of large-size images, we designed and implemented a GPU-enabled ESTARFM program based on the Compute Unified Device Architecture (CUDA), called cuESTARFM. By taking advantages of the large amount of concurrent computing threads of a GPU, cuESTARFM can greatly reduce the computing time and improve the computational performance. Experiments showed that cuESTARFM achieved a speedup of 75 using a Nvidia Tesla K40 GPU, compared with a sequential ESTARFM program running on an Intel Xeon E3-1226 CPU
+To overcome the computational barrier and support mass production of large-size images, we designed and implemented a GPU-enabled ESTARFM program based on the Compute Unified Device Architecture (CUDA), called cuESTARFM. By taking advantages of the large amount of concurrent computing threads of a GPU, cuESTARFM can greatly reduce the computing time and improve the computational performance. Experiments showed that cuESTARFM achieved a speedup of 75 using a Nvidia Tesla K40 GPU, compared with a sequential ESTARFM program running on an Intel Xeon E3-1226 CPU.
 
 Key features of cuESTARFM:
 ========
@@ -19,12 +19,12 @@ Key features of cuESTARFM:
 +	Intakes any number of pairs of Landsat-MODIS images as the input
 + Outputs any number of prediction images
 + Supports a wide range of image formats (see http://gdal.org/formats_list.html)
-+ Includes a Windows version and a Linux/Unix version
++ Supports both Windows and Linux/Unix operating systems
 
 References
 ========
-+ Gao, F., Masek, J., Schwaller, M., and Hall, F. On the Blending of the Landsat and MODIS Surface Reflectance: Predict Daily Landsat Surface Reflectance, IEEE Transactions on Geoscience and Remote Sensing. 2006, 44(8):2207-2218.   
-+ Zhu, X., Chen, J., Gao, F., Chen, X. and Masek, J. An enhanced spatial and temporal adaptive reflectance fusion model for complex heterogeneous regions, Remote Sensing of Environment, 2010, 114(11): 2610–2623.
++ Gao, F.; Masek, J.; Schwaller, M. and Hall, F. On the Blending of the Landsat and MODIS Surface Reflectance: Predict Daily Landsat Surface Reflectance, IEEE Transactions on Geoscience and Remote Sensing. 2006, 44(8):2207-2218.   
++ Zhu, X.; Chen, J.; Gao, F.; Chen, X. and Masek, J. An enhanced spatial and temporal adaptive reflectance fusion model for complex heterogeneous regions, Remote Sensing of Environment, 2010, 114(11): 2610–2623.
 
 To Cite cuESTARFM in Publications
 ========
