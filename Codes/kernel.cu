@@ -60,7 +60,7 @@ __global__ void limit_a_CalcuRela_pairs(float **image_pairs,int num_pairs, int H
 				num++;
 		}
 
-		if(num!=(BandNum-1))
+		if(num!=(BandNum-1)||BandNum==1)
 		{
 			for( ii=0;ii<BandNum;ii++)
 			{
@@ -360,7 +360,7 @@ __global__ void limit_a_CalcuRela(float **BufferIn11,float **BufferIn22,float **
 				num++;
 		}
 
-		if(num!=(BandNum-1))
+		if(num!=(BandNum-1)||BandNum==1)
 		{
 			for(int ii=0;ii<BandNum;ii++)
 			{
