@@ -60,7 +60,7 @@ __global__ void limit_a_CalcuRela_pairs(float **image_pairs,int num_pairs, int H
 				num++;
 		}
 
-		if(num!=(BandNum-1)||BandNum==1)
+		if(num!=(BandNum-1))
 		{
 			for( ii=0;ii<BandNum;ii++)
 			{
@@ -184,7 +184,7 @@ __global__ void Blending2_pairs(float **image_pairs,int num_pairs,int Height,int
 					{	
 						location_p[n1+Idx*Win_size1*Win_size1]=r1+Width*s1;
 						d=1+sqrt((float)((r1-i)*(r1-i)+(s1-j)*(s1-j)))/(float)(Win_size1/2);
-						weight=1.0/((1.0-r[r1+Width*s1])*d);
+						weight=1.0/((1.0-r[r1+Width*s1])*d+0.0000001);
 						for( m=0;m<BandNum*num_pairs;m++)
 						{
 							Average1[m]+=(image_pairs[m%6+2*num_pairs*BandNum][r1+Width*s1]-image_pairs[m+num_pairs*BandNum][r1+Width*s1])*weight;
@@ -360,7 +360,7 @@ __global__ void limit_a_CalcuRela(float **BufferIn11,float **BufferIn22,float **
 				num++;
 		}
 
-		if(num!=(BandNum-1)||BandNum==1)
+		if(num!=(BandNum-1))
 		{
 			for(int ii=0;ii<BandNum;ii++)
 			{
@@ -481,7 +481,7 @@ __global__ void Blending2(float **BufferIn11,float **BufferIn22,float **BufferIn
 					{	
 						location_p[n1+Idx*Win_size1*Win_size1]=r1+Width*s1;
 						d=1+sqrt((float)((r1-i)*(r1-i)+(s1-j)*(s1-j)))/(float)(Win_size1/2);
-						weight=1.0/((1.0-r[r1+Width*s1])*d);
+						weight=1.0/((1.0-r[r1+Width*s1])*d+0.0000001);
 						for( m=0;m<BandNum;m++)
 						{
 							Average1[m]+=(BufferIn55[m][r1+Width*s1]-BufferIn22[m][r1+Width*s1])*weight;
