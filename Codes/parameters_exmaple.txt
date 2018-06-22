@@ -29,7 +29,8 @@ ESTARFM_PARAMETER_START
 
 # Landsat sensor error 
   sensor_uncertain = 0.0028
-
+# NODATA
+  NODATA = 0
 # Output image format (optional)
 # Will be used when the extension of the output files
 # is not given

@@ -11,4 +11,5 @@ typedef struct {
   float uncertain;
   int NUM_PAIRS;             /* number of input data pair */ 
   int WIN_SIZE;              /* window size determined by the MAX_SEARCH_DIS */
+  float _nodata;
 } PARAMETER;

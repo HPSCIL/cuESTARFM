@@ -7,7 +7,7 @@
 #include<iostream>
 #include"trans.h"
 #define num_thread 256
-#define num_block 128
+#define num_block 32
 __device__ float ftest(int i,int j)
 {
 	 const float f[]={161,18.51,10.13,7.71,6.61,5.99,5.59,5.32,5.12,4.96,
@@ -60,7 +60,7 @@ __global__ void limit_a_CalcuRela_pairs(float **image_pairs,int num_pairs, int H
 				num++;
 		}
 
-		if(num!=(BandNum-1))
+		if(num!=(BandNum-1)||(BandNum==1))
 		{
 			for( ii=0;ii<BandNum;ii++)
 			{
@@ -77,6 +77,10 @@ __global__ void limit_a_CalcuRela_pairs(float **image_pairs,int num_pairs, int H
 			dx=sqrt(sumxx/(BandNum*num_pairs)-(sumx/(BandNum*num_pairs))*(sumx/(BandNum*num_pairs)));
 			dy=sqrt(sumyy/(BandNum*num_pairs)-(sumy/(BandNum*num_pairs))*(sumy/(BandNum*num_pairs)));
 			r[j*Width+i]=(sumxy/(BandNum*num_pairs)-sumx*sumy/(BandNum*BandNum*num_pairs*num_pairs))/(dx*dy);
+			if(BandNum==1&&r[j*Width+i]>0)
+		      r[j*Width+i]=1;
+			if(BandNum==1&&r[j*Width+i]<0)
+		      r[j*Width+i]=-1;
 		}
 		else
 		{
@@ -86,7 +90,7 @@ __global__ void limit_a_CalcuRela_pairs(float **image_pairs,int num_pairs, int H
 			r[j*Width+i]=0;
 	}
 }
-__global__ void Blending2_pairs(float **image_pairs,int num_pairs,int Height,int Width, int Win_size1,float M_err,int BandNum,int current,int *location_p,float *r,float *threshold_d,int task_height )
+__global__ void Blending2_pairs(float **image_pairs,int num_pairs,int Height,int Width, int Win_size1,float M_err,int BandNum,int current,int *location_p,float *r,float *threshold_d,int task_height,float _nodata)
 {
 	const int tid=threadIdx.x;
 	const int bid=blockIdx.x;
@@ -130,7 +134,7 @@ __global__ void Blending2_pairs(float **image_pairs,int num_pairs,int Height,int
 			pix_sum1+=image_pairs[m][i+Width*j];
 			pix_sum2+=image_pairs[m+BandNum][i+Width*j];
 		}
-		if(pix_sum1!=0&&pix_sum2!=0)
+		if(fabs(pix_sum1-_nodata)>1e-6&&fabs(pix_sum2-_nodata)>1e-6)
 		{
 			n1=0;
 			weight_all=0,weight=0;
@@ -184,10 +188,10 @@ __global__ void Blending2_pairs(float **image_pairs,int num_pairs,int Height,int
 					{	
 						location_p[n1+Idx*Win_size1*Win_size1]=r1+Width*s1;
 						d=1+sqrt((float)((r1-i)*(r1-i)+(s1-j)*(s1-j)))/(float)(Win_size1/2);
-						weight=1.0/((1.0-r[r1+Width*s1])*d);
+						weight=1.0/((1.0-r[r1+Width*s1])*d+0.0000001);
 						for( m=0;m<BandNum*num_pairs;m++)
 						{
-							Average1[m]+=(image_pairs[m%6+2*num_pairs*BandNum][r1+Width*s1]-image_pairs[m+num_pairs*BandNum][r1+Width*s1])*weight;
+							Average1[m]+=(image_pairs[m%BandNum +2*num_pairs*BandNum][r1+Width*s1]-image_pairs[m+num_pairs*BandNum][r1+Width*s1])*weight;
 							//Average2[m]+=(BufferIn55[m][r1+Width*s1]-BufferIn44[m][r1+Width*s1])*weight;
 							Average3[m]+=image_pairs[m][r1+Width*s1]*weight;
 							//Average4[m]+=BufferIn33[m][r1+Width*s1]*weight;
@@ -329,7 +333,7 @@ __global__ void Blending2_pairs(float **image_pairs,int num_pairs,int Height,int
 		}
 	}
 }
-__global__ void limit_a_CalcuRela(float **BufferIn11,float **BufferIn22,float **BufferIn33,float **BufferIn44,float **BufferIn55, int Height,int Width, int Win_size1,float M_err,int BandNum,int current,int *location_p,float *r,float *threshold_d,int task_height  )
+__global__ void limit_a_CalcuRela(float **BufferIn11,float **BufferIn22,float **BufferIn33,float **BufferIn44,float **BufferIn55, int Height,int Width, int Win_size1,float M_err,int BandNum,int current,int *location_p,float *r,float *threshold_d,int task_height,float _nodata  )
 {
 	const int tid=threadIdx.x;
 	const int bid=blockIdx.x;
@@ -360,7 +364,7 @@ __global__ void limit_a_CalcuRela(float **BufferIn11,float **BufferIn22,float **
 				num++;
 		}
 
-		if(num!=(BandNum-1))
+		if(num!=(BandNum-1)||(BandNum==1))
 		{
 			for(int ii=0;ii<BandNum;ii++)
 			{
@@ -374,6 +378,10 @@ __global__ void limit_a_CalcuRela(float **BufferIn11,float **BufferIn22,float **
 			dx=sqrt(sumxx/(BandNum*2)-(sumx/(BandNum*2))*(sumx/(BandNum*2)));
 			dy=sqrt(sumyy/(BandNum*2)-(sumy/(BandNum*2))*(sumy/(BandNum*2)));
 			r[j*Width+i]=(sumxy/(BandNum*2)-sumx*sumy/(BandNum*BandNum*4))/(dx*dy);
+			if(BandNum==1&&r[j*Width+i]>0)
+		      r[j*Width+i]=1;
+			if(BandNum==1&&r[j*Width+i]<0)
+		      r[j*Width+i]=-1;
 		}
 		else
 		{
@@ -385,7 +393,7 @@ __global__ void limit_a_CalcuRela(float **BufferIn11,float **BufferIn22,float **
 
 	
 }
-__global__ void Blending2(float **BufferIn11,float **BufferIn22,float **BufferIn33,float **BufferIn44,float **BufferIn55, float **BufferOut,int Height,int Width, int Win_size1,float M_err,int BandNum,int current,int *location_p,float *r,float *threshold_d,int task_height )
+__global__ void Blending2(float **BufferIn11,float **BufferIn22,float **BufferIn33,float **BufferIn44,float **BufferIn55, float **BufferOut,int Height,int Width, int Win_size1,float M_err,int BandNum,int current,int *location_p,float *r,float *threshold_d,int task_height ,float _nodata)
 {
 	const int tid=threadIdx.x;
 	const int bid=blockIdx.x;
@@ -429,7 +437,7 @@ __global__ void Blending2(float **BufferIn11,float **BufferIn22,float **BufferIn
 			pix_sum1+=BufferIn11[m][i+Width*j];
 			pix_sum2+=BufferIn33[m][i+Width*j];
 		}
-		if(pix_sum1!=0&&pix_sum2!=0)
+		if(fabs(pix_sum1-_nodata)>1e-6&&fabs(pix_sum2-_nodata)>1e-6) 
 		{
 			n1=0;
 			weight_all=0,weight=0;
@@ -481,7 +489,7 @@ __global__ void Blending2(float **BufferIn11,float **BufferIn22,float **BufferIn
 					{	
 						location_p[n1+Idx*Win_size1*Win_size1]=r1+Width*s1;
 						d=1+sqrt((float)((r1-i)*(r1-i)+(s1-j)*(s1-j)))/(float)(Win_size1/2);
-						weight=1.0/((1.0-r[r1+Width*s1])*d);
+						weight=1.0/((1.0-r[r1+Width*s1])*d+0.0000001 );
 						for( m=0;m<BandNum;m++)
 						{
 							Average1[m]+=(BufferIn55[m][r1+Width*s1]-BufferIn22[m][r1+Width*s1])*weight;
@@ -582,6 +590,7 @@ void runtest1_pairs(float **sub_area,int Height,int Width,PARAMETER *par,int Ban
 	 float *dev_std,*r;
 	 int num_pairs=par->NUM_PAIRS;
 	 int windows=par->WIN_SIZE;
+	 float _nodata=par->_nodata;
 	 float M_err=par->uncertain;
 	 a = (float**)malloc(2*(par->NUM_PAIRS+1)*BandNum*sizeof(float*));
 	 for(int b=0;b<2*(par->NUM_PAIRS+1)*BandNum;b++)
@@ -601,7 +610,7 @@ void runtest1_pairs(float **sub_area,int Height,int Width,PARAMETER *par,int Ban
 	 cudaMemcpy(dev_sub_area,a,sizeof(float*)*2*(par->NUM_PAIRS+1)*BandNum,cudaMemcpyHostToDevice);
 	 limit_a_CalcuRela_pairs<<<num_block, num_thread>>>(dev_sub_area, num_pairs,Height, Width,windows,M_err,BandNum,current,Location_P,r,dev_std,task_height);
 	// cudaMemGetInfo(&ff, &tt);
-	Blending2_pairs<<<num_block, num_thread>>>(dev_sub_area,num_pairs, Height, Width,  windows, M_err,BandNum,current,Location_P,r,dev_std,task_height);
+	Blending2_pairs<<<num_block, num_thread>>>(dev_sub_area,num_pairs, Height, Width,  windows, M_err,BandNum,current,Location_P,r,dev_std,task_height,_nodata);
 	for(int g=0;g<BandNum;g++)
 	{
 		cudaMemcpy(sub_area[g+(2*num_pairs+1)*BandNum],a[g+(2*num_pairs+1)*BandNum],Height*Width*sizeof(float),cudaMemcpyDeviceToHost);
@@ -614,7 +623,7 @@ void runtest1_pairs(float **sub_area,int Height,int Width,PARAMETER *par,int Ban
 	cudaFree(r);
 	cudaFree(dev_std);
  }
-void runtest1(float **BufferIn11,float **BufferIn22,float **BufferIn33,float **BufferIn44,float **BufferIn55,float **BufferOut,int Height,int Width,int Win_size1,float M_err,int BandNum,float *std,int current,int task_height)
+void runtest1(float **BufferIn11,float **BufferIn22,float **BufferIn33,float **BufferIn44,float **BufferIn55,float **BufferOut,int Height,int Width,int Win_size1,float M_err,int BandNum,float *std,int current,int task_height,float _nodata)
 {
 	float **dev_BufferIn11,**dev_BufferIn22,**dev_BufferIn33,**dev_BufferIn44,**dev_BufferIn55,**dev_BufferOut;//*Changed_BufferIn11,*Changed_BufferIn33;
 	float **a,**f,**c,**d,**e,**out;
@@ -668,7 +677,7 @@ void runtest1(float **BufferIn11,float **BufferIn22,float **BufferIn33,float **B
 	cudaMemcpy(dev_std, std,sizeof(float)*BandNum*2,cudaMemcpyHostToDevice);
 	int deviceCount;
 	cudaGetDeviceCount(&deviceCount);
-//	cudaSetDevice(0);
+	//cudaSetDevice(0);
 	/*size_t ff,tt;
     cudaMemGetInfo(&ff, &tt);
 	cudaEvent_t start,stop;
@@ -676,9 +685,9 @@ void runtest1(float **BufferIn11,float **BufferIn22,float **BufferIn33,float **B
     cudaEventCreate(&stop);
     cudaEventRecord(start,0);*/
 	
-	limit_a_CalcuRela<<<num_block, num_thread>>>(dev_BufferIn11,dev_BufferIn22,dev_BufferIn33,dev_BufferIn44,dev_BufferIn55, Height, Width,  Win_size1,M_err,BandNum,current,Location_P,r,dev_std,task_height);
+	limit_a_CalcuRela<<<num_block, num_thread>>>(dev_BufferIn11,dev_BufferIn22,dev_BufferIn33,dev_BufferIn44,dev_BufferIn55, Height, Width,  Win_size1,M_err,BandNum,current,Location_P,r,dev_std,task_height,_nodata);
 	// cudaMemGetInfo(&ff, &tt);
-	Blending2<<<num_block, num_thread>>>(dev_BufferIn11,dev_BufferIn22,dev_BufferIn33,dev_BufferIn44,dev_BufferIn55,dev_BufferOut, Height, Width,  Win_size1, M_err,BandNum,current,Location_P,r,dev_std,task_height);
+	Blending2<<<num_block, num_thread>>>(dev_BufferIn11,dev_BufferIn22,dev_BufferIn33,dev_BufferIn44,dev_BufferIn55,dev_BufferOut, Height, Width,  Win_size1, M_err,BandNum,current,Location_P,r,dev_std,task_height,_nodata);
 	/*cudaEventRecord(stop,0);
 	cudaEventSynchronize(stop);
     float costtime=0.0f;
@@ -709,7 +718,7 @@ void runtest1(float **BufferIn11,float **BufferIn22,float **BufferIn33,float **B
 	cudaFree(r);
 	cudaFree(dev_std);
 }
-void runtest(float **BufferIn11,float **BufferIn22,float **BufferIn33,float **BufferIn44,float **BufferIn55,float **BufferOut,int Height,int Width,int Win_size1,float M_err,int num_class,int BandNum)
+void runtest(float **BufferIn11,float **BufferIn22,float **BufferIn33,float **BufferIn44,float **BufferIn55,float **BufferOut,int Height,int Width,int Win_size1,float M_err,int num_class,int BandNum,float _nodata)
 {
 	float *std=new float[BandNum*2];
 	for(int i=0;i<BandNum;i++)
@@ -779,7 +788,7 @@ void runtest(float **BufferIn11,float **BufferIn22,float **BufferIn33,float **Bu
 		}
 		int current=task_start-data_start;
 		int task_height=task_end-task_start+1;
-		runtest1(sub_BufferIn11,sub_BufferIn22,sub_BufferIn33,sub_BufferIn44,sub_BufferIn55,sub_out,data_height,Width,Win_size1,M_err, BandNum,std,current,task_height);
+		runtest1(sub_BufferIn11,sub_BufferIn22,sub_BufferIn33,sub_BufferIn44,sub_BufferIn55,sub_out,data_height,Width,Win_size1,M_err, BandNum,std,current,task_height,_nodata);
 		
 		for(int k=0;k<BandNum;k++)
 		{
@@ -913,7 +922,7 @@ void Re_fusion3(CuLayer *psensor,PARAMETER *par)
 		psensor[2*(par->NUM_PAIRS+c)+1].resize(psensor[0].getWidth(),psensor[0].getHeight(),psensor[0].getbandCount());
 		if(par->NUM_PAIRS==2)
 		{
-			runtest(psensor[0].getData(),psensor[2].getData(),psensor[1].getData(),psensor[3].getData(),psensor[2*(par->NUM_PAIRS+c)].getData(),psensor[2*(par->NUM_PAIRS+c)+1].getData(),psensor[0].getHeight(),psensor[0].getWidth(),par->WIN_SIZE,par->uncertain,par->class_num,psensor[0].getbandCount());
+			runtest(psensor[0].getData(),psensor[2].getData(),psensor[1].getData(),psensor[3].getData(),psensor[2*(par->NUM_PAIRS+c)].getData(),psensor[2*(par->NUM_PAIRS+c)+1].getData(),psensor[0].getHeight(),psensor[0].getWidth(),par->WIN_SIZE,par->uncertain,par->class_num,psensor[0].getbandCount(),par->_nodata);
 			//char* driverName = "GTiff";
 			psensor[2*(par->NUM_PAIRS+c)+1].setGeoTransform(psensor[0].getGeoTransform());
 			psensor[2*(par->NUM_PAIRS+c)+1].setProjection(psensor[0].getProjection());
@@ -929,7 +938,7 @@ void Re_fusion3(CuLayer *psensor,PARAMETER *par)
 	}
 
 }
- void Re_fusion2(const char * BufferIn0,const char * BufferIn1,const char * BufferIn2,const char * BufferIn3,const char * BufferIn4,const char * BufferOut,int win_size,int class_num,float M_err)
+ void Re_fusion2(const char * BufferIn0,const char * BufferIn1,const char * BufferIn2,const char * BufferIn3,const char * BufferIn4,const char * BufferOut,int win_size,int class_num,float M_err,float _nodata)
 {
 	GDALAllRegister();
 	CPLSetConfigOption("GDAL_FILENAME_IS_UTF8","NO"); 
@@ -1024,8 +1033,8 @@ void Re_fusion3(CuLayer *psensor,PARAMETER *par)
 	}
 	//e.Blending2(BufferLandsat_0,BufferModis_0,BufferLandsat_1,BufferModis_1,BufferModis_2,BufferOutColor,height,width,win_size,flag, L_err, M_err, Para_h,BandNum,1.0);
 	long now1 = clock();
-	 runtest(BufferLandsat_0,BufferModis_0,BufferLandsat_1,BufferModis_1,BufferModis_2,BufferOutColor,height,width,win_size,M_err,BandNum,class_num);
-	  printf("GPU脭脣脨脨脢卤录盲脦陋拢潞%dms\n", int(((double)(clock() - now1)) / CLOCKS_PER_SEC * 1000));
+	 runtest(BufferLandsat_0,BufferModis_0,BufferLandsat_1,BufferModis_1,BufferModis_2,BufferOutColor,height,width,win_size,M_err,BandNum,class_num,_nodata);
+	  printf("GPU运行时间为：%dms\n", int(((double)(clock() - now1)) / CLOCKS_PER_SEC * 1000));
 	for (b=0;b<BandNum;b++)
 	{
 		GDALRasterBand* HOut = LandsatDs->GetRasterBand(b+1);

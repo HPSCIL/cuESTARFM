@@ -48,7 +48,7 @@ int parseParameters(char *fname, CuLayer *psensor,PARAMETER *par)
 		nn++;
 		if(nn>1000)
 		{
-			cerr<<"é…ç½®æ–‡ä»¶åº”è¯¥ç”¨ESTARFM_PARAMETER_ENDç»“å°¾"<<endl;
+			cerr<<"ÅäÖÃÎÄ¼þÓ¦¸ÃÓÃESTARFM_PARAMETER_END½áÎ²"<<endl;
 				break;
 		}
 		memset(buffer,0,1000);
@@ -66,7 +66,7 @@ int parseParameters(char *fname, CuLayer *psensor,PARAMETER *par)
 				par->NUM_PAIRS = atoi(tokenptr);
 				if(par->NUM_PAIRS<=1)
 				{
-					cerr<<"å‚è€ƒå½±åƒè‡³å°‘ä¸¤å¯¹"<<endl;
+					cerr<<"²Î¿¼Ó°ÏñÖÁÉÙÁ½¶Ô"<<endl;
 					return -1;
 				}
 			}
@@ -123,6 +123,8 @@ int parseParameters(char *fname, CuLayer *psensor,PARAMETER *par)
 			}
 			else if(strcmp(label, "The_width_of_searching_window") == 0)
 				par->WIN_SIZE=atoi(tokenptr);
+			else if(strcmp(label, "NODATA") == 0)
+				par->_nodata=atof(tokenptr);
 			else if(strcmp(label, "Assumed_number_of_classifications") == 0)
 				par->class_num=atoi(tokenptr);
 			else if(strcmp(label, "sensor_uncertain") == 0)
@@ -137,7 +139,7 @@ int parseParameters(char *fname, CuLayer *psensor,PARAMETER *par)
     {
 		if(psensor[0].getHeight()!=psensor[i].getHeight()||psensor[0].getWidth()!=psensor[i].getWidth())
 		{
-			cerr<<"è¾“å…¥å½±åƒå›¾å¹…èŒƒå›´ä¸åŒ¹é…"<<endl;
+			cerr<<"ÊäÈëÓ°ÏñÍ¼·ù·¶Î§²»Æ¥Åä"<<endl;
 			return -1;
 		}
 	}
