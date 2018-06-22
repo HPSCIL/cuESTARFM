@@ -60,7 +60,7 @@ __global__ void limit_a_CalcuRela_pairs(float **image_pairs,int num_pairs, int H
 				num++;
 		}
 
-		if(num!=(BandNum-1))
+		if(num!=(BandNum-1)||(BandNum==1))
 		{
 			for( ii=0;ii<BandNum;ii++)
 			{
@@ -77,6 +77,10 @@ __global__ void limit_a_CalcuRela_pairs(float **image_pairs,int num_pairs, int H
 			dx=sqrt(sumxx/(BandNum*num_pairs)-(sumx/(BandNum*num_pairs))*(sumx/(BandNum*num_pairs)));
 			dy=sqrt(sumyy/(BandNum*num_pairs)-(sumy/(BandNum*num_pairs))*(sumy/(BandNum*num_pairs)));
 			r[j*Width+i]=(sumxy/(BandNum*num_pairs)-sumx*sumy/(BandNum*BandNum*num_pairs*num_pairs))/(dx*dy);
+			if(BandNum==1&&r[j*Width+i]>0)
+		      r[j*Width+i]=1;
+			if(BandNum==1&&r[j*Width+i]<0)
+		      r[j*Width+i]=-1;
 		}
 		else
 		{
@@ -360,7 +364,7 @@ __global__ void limit_a_CalcuRela(float **BufferIn11,float **BufferIn22,float **
 				num++;
 		}
 
-		if(num!=(BandNum-1))
+		if(num!=(BandNum-1)||(BandNum==1))
 		{
 			for(int ii=0;ii<BandNum;ii++)
 			{
@@ -374,6 +378,10 @@ __global__ void limit_a_CalcuRela(float **BufferIn11,float **BufferIn22,float **
 			dx=sqrt(sumxx/(BandNum*2)-(sumx/(BandNum*2))*(sumx/(BandNum*2)));
 			dy=sqrt(sumyy/(BandNum*2)-(sumy/(BandNum*2))*(sumy/(BandNum*2)));
 			r[j*Width+i]=(sumxy/(BandNum*2)-sumx*sumy/(BandNum*BandNum*4))/(dx*dy);
+			if(BandNum==1&&r[j*Width+i]>0)
+		      r[j*Width+i]=1;
+			if(BandNum==1&&r[j*Width+i]<0)
+		      r[j*Width+i]=-1;
 		}
 		else
 		{
