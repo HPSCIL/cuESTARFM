@@ -134,7 +134,7 @@ __global__ void Blending2_pairs(float **image_pairs,int num_pairs,int Height,int
 			pix_sum1+=image_pairs[m][i+Width*j];
 			pix_sum2+=image_pairs[m+BandNum][i+Width*j];
 		}
-		if(fabs(pix_sum1-_nodata)>1e-6&&fabs(pix_sum2-_nodata)>1e-6)
+		if(fabs(pix_sum1-_nodata*BandNum)>1e-6&&fabs(pix_sum2-_nodata*BandNum)>1e-6)
 		{
 			n1=0;
 			weight_all=0,weight=0;
@@ -437,7 +437,7 @@ __global__ void Blending2(float **BufferIn11,float **BufferIn22,float **BufferIn
 			pix_sum1+=BufferIn11[m][i+Width*j];
 			pix_sum2+=BufferIn33[m][i+Width*j];
 		}
-		if(fabs(pix_sum1-_nodata)>1e-6&&fabs(pix_sum2-_nodata)>1e-6) 
+		if(fabs(pix_sum1-_nodata*BandNum)>1e-6&&fabs(pix_sum2-_nodata*BandNum)>1e-6) 
 		{
 			n1=0;
 			weight_all=0,weight=0;
