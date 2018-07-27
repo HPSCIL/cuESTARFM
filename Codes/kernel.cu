@@ -805,12 +805,12 @@ void runtest(float **BufferIn11,float **BufferIn22,float **BufferIn33,float **Bu
 		}
 		for(int g=0;g<BandNum;g++)
 	{
-		delete sub_BufferIn11[g];
-		delete sub_BufferIn22[g];
-		delete sub_BufferIn33[g];
-		delete sub_BufferIn44[g];
-		delete sub_BufferIn55[g];
-		delete sub_out[g];
+		delete []sub_BufferIn11[g];
+		delete []sub_BufferIn22[g];
+		delete []sub_BufferIn33[g];
+		delete []sub_BufferIn44[g];
+		delete []sub_BufferIn55[g];
+		delete []sub_out[g];
 		/*cudaFree(dev_BufferIn11[g]);
 		cudaFree(dev_BufferIn22[g]);
 		cudaFree(dev_BufferIn33[g]);
@@ -903,7 +903,7 @@ void runtest_pairs(CuLayer *psensor,PARAMETER *par,int solve)
 		}
 		for(int b=0;b<2*(par->NUM_PAIRS+1)*BandNum;b++)
 		{
-			delete sub_area[b];
+			delete []sub_area[b];
 			/*cudaFree(dev_BufferIn11[g]);
 			cudaFree(dev_BufferIn22[g]);
 			cudaFree(dev_BufferIn33[g]);
