@@ -1,0 +1,39 @@
+ESTARFM_PARAMETER_START
+
+# The number of input pairs of Landsat-MODIS images (>=2)
+  NUM_IN_PAIRS = 2
+
+# The input MODIS images 
+# File names are separated by space
+  IN_PAIR_MODIS_FNAME = D:\cuda\shikong\testdata\M_2002_01_04.tif D:\cuda\shikong\testdata\M_2002_02_21.tif
+
+# The input Landsat images
+# File names are separated by space
+  IN_PAIR_LANDSAT_FNAME =  D:\cuda\shikong\testdata\L_2002_01_04.tif D:\cuda\shikong\testdata\L_2002_02_21.tif
+
+# The MODIS images for the prediction dates
+# Multiple images can be given
+# File names are separated by space
+  IN_PDAY_MODIS_FNAME = D:\cuda\shikong\testdata\M_2002_02_12.tif
+
+# The output synthetic prediction images
+# Multiple images can be given
+# File names are separated by space
+  OUT_PDAY_LANDSAT_FNAME = D:\cuda\shikong\testdata\estr_pairs.tif
+
+# The_width of searching_window
+  The_width_of_searching_window = 51
+
+# Assumed_number of classifications
+  Assumed_number_of_classifications = 6
+
+# Landsat sensor error 
+  sensor_uncertain = 0.0028
+# NODATA
+  NODATA = 0
+# Output image format (optional)
+# Will be used when the extension of the output files
+# is not given
+  G_Type = GTIff
+
+ESTARFM_PARAMETER_END
